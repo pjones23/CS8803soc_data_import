@@ -359,7 +359,7 @@ public class Import_Data {
 			checkinCounter++;
 			
 			percent = (double)checkinCounter/(double)numCheckinEntries*100;
-			System.out.println("Tip Progress: " + Integer.toString((int)percent) + "% (" + Integer.toString(checkinCounter) + "/"
+			System.out.println("Checkin Progress: " + Integer.toString((int)percent) + "% (" + Integer.toString(checkinCounter) + "/"
 					+ Integer.toString(numCheckinEntries) + ")");
 		}
 		mysql.close();
