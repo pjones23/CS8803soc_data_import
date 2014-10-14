@@ -99,7 +99,8 @@ public class Import_Data {
 								}
 								System.out.println("\n");
 								*/
-								i++;
+								
+								// i++;
 							}
 						}
 						else if(js.getString("type").contains("review") && m<10){
@@ -127,7 +128,8 @@ public class Import_Data {
 							if(this.business_ids.contains(business_id)){
 								this.reviews.add(new Review(review_id, business_id, user_id, text, stars, useful_votes, type, date));
 							}
-							m++;
+							
+							// m++;
 						}
 						else if(js.getString("type").contains("checkin") && k<10){
 							if(this.checkins.size() == 0)
@@ -148,7 +150,8 @@ public class Import_Data {
 							if(this.business_ids.contains(business_id)){
 								this.checkins.add(new Checkin(business_id, checkin_info, type));
 							}
-							k++;
+							
+							// k++;
 						}
 						else if(js.getString("type").contains("tip") && l<10){
 							if(this.tips.size() == 0)
@@ -172,7 +175,8 @@ public class Import_Data {
 							if(this.business_ids.contains(business_id)){
 								this.tips.add(new Tip(business_id, user_id, text, likes, type, date));
 							}
-							l++;
+							
+							// l++;
 						}
 					}
 					catch(Exception e){
