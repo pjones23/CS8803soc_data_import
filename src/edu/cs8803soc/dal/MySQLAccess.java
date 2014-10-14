@@ -29,7 +29,8 @@ public class MySQLAccess {
 	
 	public void close(){
 		try {
-			this.connect.close();
+			if(this.connect != null && !this.connect.isClosed())
+				this.connect.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

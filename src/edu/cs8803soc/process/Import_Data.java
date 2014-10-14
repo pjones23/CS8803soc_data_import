@@ -271,5 +271,94 @@ public class Import_Data {
 				+ Integer.toString(totalEntries) + ")");
 		
 	}
+	
+	public void importBusinesses(){
+		boolean successfulInsert = false;
+		int numBusinessEntries = this.businesses.size();
+		int businessCounter = 0;
+		double percent = 0;
+		
+		MySQLAccess mysql = new MySQLAccess();
+		
+		System.out.println("Inserting businesses...");
+		for(Business business : this.businesses){
+			successfulInsert = business.insertRecord(mysql);
+			if(!successfulInsert)
+				System.out.println("Failed to insert business. (Name: " + business.name 
+						+ " | ID: " + business.business_id + ")");
+			businessCounter++;
+			
+			percent = (double)businessCounter/(double)numBusinessEntries*100;
+			System.out.println("Business Progress: " + Integer.toString((int)percent) + "% (" + Integer.toString(businessCounter) + "/"
+					+ Integer.toString(numBusinessEntries) + ")");
+		}
+		mysql.close();
+	}
+	
+	public void importReviews(){
+		boolean successfulInsert = false;
+		int numReviewEntries = this.reviews.size();
+		int reviewCounter = 0;
+		double percent = 0;
+		
+		MySQLAccess mysql = new MySQLAccess();
+		
+		System.out.println("Inserting reviews...");
+		for(Review review : this.reviews){
+			successfulInsert = review.insertRecord(mysql);
+			if(!successfulInsert)
+				System.out.println("Failed to insert review. (ID: " + review.review_id + ")");
+			reviewCounter++;
+			
+			percent = (double)reviewCounter/(double)numReviewEntries*100;
+			System.out.println("Review Progress: " + Integer.toString((int)percent) + "% (" + Integer.toString(reviewCounter) + "/"
+					+ Integer.toString(numReviewEntries) + ")");
+		}
+		mysql.close();
+	}
+	
+	public void importTips(){
+		boolean successfulInsert = false;
+		int numTipEntries = this.tips.size();
+		int tipCounter = 0;
+		double percent = 0;
+
+		MySQLAccess mysql = new MySQLAccess();
+		
+		System.out.println("Inserting tips...");
+		for(Tip tip : this.tips){
+			successfulInsert = tip.insertRecord(mysql);
+			if(!successfulInsert)
+				System.out.println("Failed to insert tip for business ID: " + tip.business_id + ")");
+			tipCounter++;
+			
+			percent = (double)tipCounter/(double)numTipEntries*100;
+			System.out.println("Tip Progress: " + Integer.toString((int)percent) + "% (" + Integer.toString(tipCounter) + "/"
+					+ Integer.toString(numTipEntries) + ")");
+		}
+		mysql.close();
+	}
+	
+	public void importCheckins(){
+		boolean successfulInsert = false;
+		int numCheckinEntries = this.checkins.size();
+		int checkinCounter = 0;
+		double percent = 0;
+		
+		MySQLAccess mysql = new MySQLAccess();
+		
+		System.out.println("Inserting checkins...");
+		for(Checkin checkin : this.checkins){
+			successfulInsert = checkin.insertRecord(mysql);
+			if(!successfulInsert)
+				System.out.println("Failed to insert checkin for business ID: " + checkin.business_id + ")");
+			checkinCounter++;
+			
+			percent = (double)checkinCounter/(double)numCheckinEntries*100;
+			System.out.println("Tip Progress: " + Integer.toString((int)percent) + "% (" + Integer.toString(checkinCounter) + "/"
+					+ Integer.toString(numCheckinEntries) + ")");
+		}
+		mysql.close();
+	}
 
 }
