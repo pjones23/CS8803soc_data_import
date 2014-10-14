@@ -13,14 +13,14 @@ import edu.cs8803soc.process.Tip;
 public class MySQLAccess {
 
 	private Connection connect = null;
-	
+	private String connectionURL = null;
 	public MySQLAccess() {
-
+		
 		try {
 			// this will load the MySQL driver, each DB has its own driver
 			Class.forName("com.mysql.jdbc.Driver");
 			// setup the connection with the DB.
-			String connectionURL = "jdbc:mysql://helpyelp.me/helpyelpdb?useInformationSchema=true&user=helpyelp14&password=CS8803soc";
+			this.connectionURL = "jdbc:mysql://helpyelp.me/helpyelpdb?useInformationSchema=true&user=helpyelp14&password=CS8803soc";
 			this.connect = DriverManager.getConnection(connectionURL);
 		} catch (SQLException | ClassNotFoundException e) {
 			e.printStackTrace();
@@ -39,6 +39,10 @@ public class MySQLAccess {
 	public boolean executeInsertBusiness(Business business){
 		CallableStatement cs;
 		try {
+			// Reconnect if closed and trying to run the query
+			if(this.connect.isClosed())
+				this.connect = DriverManager.getConnection(connectionURL);
+			
 			cs = this.connect.prepareCall("{call insertBusiness(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}");
 			// 14 parameters
 			cs.setString(1, business.business_id); // 1 - business_id (VARCHAR(100))
@@ -53,6 +57,8 @@ public class MySQLAccess {
 			cs.setString(10, business.categories); // 10 - categories (VARCHAR (1000))
 			cs.setDouble(11, business.longitude); // 11 - longitude (DECIMAL)
 			cs.setDouble(12, business.latitude); // 12 - latitude (DECIMAL)
+			if(business.attributes.length() > 1000)
+				business.attributes = business.attributes.substring(0, 1000);
 			cs.setString(13, business.attributes); // 13 - attributes (VARCHAR (1000))
 			cs.registerOutParameter(14, java.sql.Types.INTEGER); // 14 (OUT) - result (INT) 
 		
@@ -67,9 +73,13 @@ public class MySQLAccess {
 		return false;
 	}
 	
-	public boolean executeInsertReview(Review review){
+	public boolean executeInsertReview(Review review) {
 		CallableStatement cs;
 		try {
+			// Reconnect if closed and trying to run the query
+			if (this.connect.isClosed())
+				this.connect = DriverManager.getConnection(connectionURL);
+
 			cs = this.connect.prepareCall("{call insertReview(?, ?, ?, ?, ?, ?, ?, ?, ?)}");
 			// 9 parameters
 			cs.setString(1, review.review_id); // 1 - review_id (VARCHAR (100))
@@ -98,9 +108,15 @@ public class MySQLAccess {
 	public boolean executeInsertCheckin(Checkin checkin){
 		CallableStatement cs;
 		try {
+			// Reconnect if closed and trying to run the query
+			if (this.connect.isClosed())
+				this.connect = DriverManager.getConnection(connectionURL);
+
 			cs = this.connect.prepareCall("{call insertCheckin(?, ?, ?, ?)}");
 			// 4 parameters
 			cs.setString(1, checkin.business_id); // 1 - business_id (VARCHAR (100))
+			if(checkin.checkin_info.length() > 1000)
+				checkin.checkin_info = checkin.checkin_info.substring(0, 1000);
 			cs.setString(2, checkin.checkin_info); // 2 - checkin_info (VARCHAR (1000))
 			cs.setString(3,  checkin.type); // 3 - type (VARCHAR (10))
 			cs.registerOutParameter(4, java.sql.Types.INTEGER); // 4 (OUT) - result (INT) 
@@ -119,6 +135,10 @@ public class MySQLAccess {
 	public boolean executeInsertTip(Tip tip){
 		CallableStatement cs;
 		try {
+			// Reconnect if closed and trying to run the query
+			if (this.connect.isClosed())
+				this.connect = DriverManager.getConnection(connectionURL);
+
 			cs = this.connect.prepareCall("{call insertTip(?, ?, ?, ?, ?, ?, ?)}");
 			// 7 parameters
 			cs.setString(1, tip.business_id); // 1 - business_id (VARCHAR (100))
