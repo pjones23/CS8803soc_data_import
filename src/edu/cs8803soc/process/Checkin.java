@@ -17,5 +17,9 @@ public class Checkin implements IRecord{
 	public boolean insertRecord(MySQLAccess mysql) {
 		return mysql.executeInsertCheckin(this);
 	}
+
+	public static int getNumberOfRecordsInDatabase(MySQLAccess mysql) {
+		return mysql.executeNumberOfCheckinRecords();
+	}
 	
 }

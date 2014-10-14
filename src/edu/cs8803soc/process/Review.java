@@ -28,5 +28,9 @@ public class Review implements IRecord {
 	public boolean insertRecord(MySQLAccess mysql) {
 		return mysql.executeInsertReview(this);
 	}
+
+	public static int getNumberOfRecordsInDatabase(MySQLAccess mysql) {
+		return mysql.executeNumberOfReviewRecords();
+	}
 	
 }

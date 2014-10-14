@@ -41,5 +41,9 @@ public class Business implements IRecord {
 	public boolean insertRecord(MySQLAccess mysql) {
 		return mysql.executeInsertBusiness(this);
 	}
+
+	public static int getNumberOfRecordsInDatabase(MySQLAccess mysql) {
+		return mysql.executeNumberOfBusinessRecords();
+	}
 	
 }

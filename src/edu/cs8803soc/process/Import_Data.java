@@ -284,8 +284,20 @@ public class Import_Data {
 		
 		MySQLAccess mysql = new MySQLAccess();
 		
+		// Get starting point by checking current number of records in the table
+		int startingPoint = Business.getNumberOfRecordsInDatabase(mysql);
+		if(startingPoint == -1){
+			System.out.println("Error in getting number of records in business table. Returned -1.");
+			return;
+		}
+		else{
+			businessCounter = startingPoint;
+		}
+		
 		System.out.println("Inserting businesses...");
-		for(Business business : this.businesses){
+		Business business;
+		for(int i = startingPoint; i < this.businesses.size(); i++){
+			business = this.businesses.get(i);
 			successfulInsert = business.insertRecord(mysql);
 			if(!successfulInsert)
 				System.out.println("Failed to insert business. (Name: " + business.name 
@@ -307,8 +319,20 @@ public class Import_Data {
 		
 		MySQLAccess mysql = new MySQLAccess();
 		
+		// Get starting point by checking current number of records in the table
+		int startingPoint = Review.getNumberOfRecordsInDatabase(mysql);
+		if(startingPoint == -1){
+			System.out.println("Error in getting number of records in review table. Returned -1.");
+			return;
+		}
+		else{
+			reviewCounter = startingPoint;
+		}
+		
 		System.out.println("Inserting reviews...");
-		for(Review review : this.reviews){
+		Review review;
+		for(int i = startingPoint; i < this.reviews.size(); i++){
+			review = this.reviews.get(i);
 			successfulInsert = review.insertRecord(mysql);
 			if(!successfulInsert)
 				System.out.println("Failed to insert review. (ID: " + review.review_id + ")");
@@ -329,8 +353,20 @@ public class Import_Data {
 
 		MySQLAccess mysql = new MySQLAccess();
 		
+		// Get starting point by checking current number of records in the table
+		int startingPoint = Tip.getNumberOfRecordsInDatabase(mysql);
+		if(startingPoint == -1){
+			System.out.println("Error in getting number of records in tip table. Returned -1.");
+			return;
+		}
+		else{
+			tipCounter = startingPoint;
+		}
+		
 		System.out.println("Inserting tips...");
-		for(Tip tip : this.tips){
+		Tip tip;
+		for(int i = startingPoint; i < this.tips.size(); i++){
+			tip = this.tips.get(i);
 			successfulInsert = tip.insertRecord(mysql);
 			if(!successfulInsert)
 				System.out.println("Failed to insert tip for business ID: " + tip.business_id + ")");
@@ -351,8 +387,20 @@ public class Import_Data {
 		
 		MySQLAccess mysql = new MySQLAccess();
 		
+		// Get starting point by checking current number of records in the table
+		int startingPoint = Checkin.getNumberOfRecordsInDatabase(mysql);
+		if(startingPoint == -1){
+			System.out.println("Error in getting number of records in checkin table. Returned -1.");
+			return;
+		}
+		else{
+			checkinCounter = startingPoint;
+		}
+		
 		System.out.println("Inserting checkins...");
-		for(Checkin checkin : this.checkins){
+		Checkin checkin;
+		for(int i = startingPoint; i < this.checkins.size(); i++){
+			checkin = this.checkins.get(i);
 			successfulInsert = checkin.insertRecord(mysql);
 			if(!successfulInsert)
 				System.out.println("Failed to insert checkin for business ID: " + checkin.business_id + ")");

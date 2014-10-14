@@ -36,6 +36,27 @@ public class MySQLAccess {
 		}
 	}
 	
+	public int executeNumberOfBusinessRecords(){
+		CallableStatement cs;
+		try {
+			// Reconnect if closed and trying to run the query
+			if(this.connect.isClosed())
+				this.connect = DriverManager.getConnection(connectionURL);
+			
+			cs = this.connect.prepareCall("{call numberOfBusinessRecords(?)}");
+			// 1 parameter
+			cs.registerOutParameter(1, java.sql.Types.INTEGER); // 1 (OUT) - result (INT) 
+		
+			cs.executeQuery();
+			int result = cs.getInt(1);
+			return result;
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
+	
 	public boolean executeInsertBusiness(Business business){
 		CallableStatement cs;
 		try {
@@ -73,6 +94,27 @@ public class MySQLAccess {
 		return false;
 	}
 	
+	public int executeNumberOfReviewRecords(){
+		CallableStatement cs;
+		try {
+			// Reconnect if closed and trying to run the query
+			if(this.connect.isClosed())
+				this.connect = DriverManager.getConnection(connectionURL);
+			
+			cs = this.connect.prepareCall("{call numberOfReviewRecords(?)}");
+			// 1 parameter
+			cs.registerOutParameter(1, java.sql.Types.INTEGER); // 1 (OUT) - result (INT) 
+		
+			cs.executeQuery();
+			int result = cs.getInt(1);
+			return result;
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
+	
 	public boolean executeInsertReview(Review review) {
 		CallableStatement cs;
 		try {
@@ -105,6 +147,27 @@ public class MySQLAccess {
 		return false;
 	}
 	
+	public int executeNumberOfCheckinRecords(){
+		CallableStatement cs;
+		try {
+			// Reconnect if closed and trying to run the query
+			if(this.connect.isClosed())
+				this.connect = DriverManager.getConnection(connectionURL);
+			
+			cs = this.connect.prepareCall("{call numberOfCheckinRecords(?)}");
+			// 1 parameter
+			cs.registerOutParameter(1, java.sql.Types.INTEGER); // 1 (OUT) - result (INT) 
+		
+			cs.executeQuery();
+			int result = cs.getInt(1);
+			return result;
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
+	
 	public boolean executeInsertCheckin(Checkin checkin){
 		CallableStatement cs;
 		try {
@@ -130,6 +193,27 @@ public class MySQLAccess {
 			e.printStackTrace();
 		}
 		return false;
+	}
+	
+	public int executeNumberOfTipRecords(){
+		CallableStatement cs;
+		try {
+			// Reconnect if closed and trying to run the query
+			if(this.connect.isClosed())
+				this.connect = DriverManager.getConnection(connectionURL);
+			
+			cs = this.connect.prepareCall("{call numberOfTipRecords(?)}");
+			// 1 parameter
+			cs.registerOutParameter(1, java.sql.Types.INTEGER); // 1 (OUT) - result (INT) 
+		
+			cs.executeQuery();
+			int result = cs.getInt(1);
+			return result;
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return -1;
 	}
 	
 	public boolean executeInsertTip(Tip tip){

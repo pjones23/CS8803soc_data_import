@@ -9,7 +9,6 @@ public class Main {
 		Import_Data id = new Import_Data();
 		id.buildLists();
 
-		// id.importLists();
 		Thread businessImportThread = new Thread(new DataOperation(id,
 				DataOperation.BUSINESS));
 		businessImportThread.start();

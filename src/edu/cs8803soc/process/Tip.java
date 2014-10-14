@@ -24,5 +24,9 @@ public class Tip implements IRecord{
 	public boolean insertRecord(MySQLAccess mysql) {
 		return mysql.executeInsertTip(this);
 	}
+
+	public static int getNumberOfRecordsInDatabase(MySQLAccess mysql) {
+		return mysql.executeNumberOfTipRecords();
+	}
 	
 }
