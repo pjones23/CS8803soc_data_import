@@ -1,6 +1,8 @@
 package edu.cs8803soc.process;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -50,7 +52,6 @@ public class Import_Data {
 					//System.out.println(currentLine);
 					try{
 						JSONObject js = new JSONObject(currentLine);
-						//String[] names = JSONObject.getNames(js);
 
 						if(js.getString("type").contains("business") && i<10){
 							if(this.businesses.size() == 0)
@@ -90,15 +91,6 @@ public class Import_Data {
 												neighborhoods, stars, name, business_categories, longitude, latitude,
 												attributes));
 								this.business_ids.add(business_id);
-								/*
-								System.out.println("BUSINESS EXAMPLE " + Integer.toString(i+1));
-								for(String n : names)
-								{
-									System.out.print(n + ": ");
-									System.out.println(js.get(n));
-								}
-								System.out.println("\n");
-								*/
 								
 								// i++;
 							}
@@ -106,15 +98,7 @@ public class Import_Data {
 						else if(js.getString("type").contains("review") && m<10){
 							if(this.reviews.size() == 0)
 								System.out.println("Collecting reviews...");
-							/*
-							System.out.println("REVIEW EXAMPLE " + Integer.toString(m+1));
-							for(String n : names)
-							{
-								System.out.print(n + ": ");
-								System.out.println(js.get(n));
-							}
-							System.out.println("\n");
-							*/
+
 							String review_id = js.getString("review_id");
 							String business_id = js.getString("business_id");
 							String user_id = js.getString("user_id");
@@ -130,19 +114,11 @@ public class Import_Data {
 							}
 							
 							// m++;
-						}
+						}/*
 						else if(js.getString("type").contains("checkin") && k<10){
 							if(this.checkins.size() == 0)
 								System.out.println("Collecting checkins...");
-							/*
-							System.out.println("CHECK-IN EXAMPLE " + Integer.toString(k+1));
-							for(String n : names)
-							{
-								System.out.print(n + ": ");
-								System.out.println(js.get(n));
-							}
-							System.out.println("\n");
-							*/
+							
 							String business_id = js.getString("business_id");
 							String checkin_info = js.get("checkin_info").toString();
 							String type = js.getString("type");
@@ -156,15 +132,7 @@ public class Import_Data {
 						else if(js.getString("type").contains("tip") && l<10){
 							if(this.tips.size() == 0)
 								System.out.println("Collecting tips...");
-							/*
-							System.out.println("TIP EXAMPLE " + Integer.toString(l+1));
-							for(String n : names)
-							{
-								System.out.print(n + ": ");
-								System.out.println(js.get(n));
-							}
-							System.out.println("\n");
-							*/
+							
 							String business_id = js.getString("business_id");
 							String user_id = js.getString("user_id");
 							String text = js.getString("text");
@@ -178,6 +146,7 @@ public class Import_Data {
 							
 							// l++;
 						}
+						*/
 					}
 					catch(Exception e){
 						//System.out.println("Not added due to error: " + e.getMessage());
@@ -345,6 +314,105 @@ public class Import_Data {
 		mysql.close();
 	}
 	
+	public boolean createReviewSQL() {
+		System.out.println("Creating review sql import file...");
+	
+		boolean successfulCreation = false;
+	
+		final JFileChooser jfc = new JFileChooser();
+		jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		int returnVal = jfc.showOpenDialog(null);
+	
+		if (returnVal == JFileChooser.APPROVE_OPTION) {
+			File newFile = new File(jfc.getSelectedFile(), "review_insert.sql");
+	
+			int numReviewEntries = this.reviews.size();
+			int reviewCounter = 0;
+			double percent = 0;
+	
+			// MySQLAccess mysql = new MySQLAccess();
+	
+			// Get starting point by checking current number of records in the
+			// table
+			// int startingPoint = Tip.getNumberOfRecordsInDatabase(mysql);
+	
+			// For now, lets set starting point to 0;
+			int startingPoint = 0;
+	
+			// mysql.close();
+	
+			if (startingPoint == -1) {
+				System.out
+						.println("Error in getting number of records in review table. Returned -1.");
+				return successfulCreation;
+			} else {
+				reviewCounter = startingPoint;
+			}
+	
+			try {
+				FileWriter writer = new FileWriter(newFile.getAbsolutePath());
+	
+				writer.append("INSERT INTO `review_test_import` (`review_id`, `business_id`, `user_id`, `text`, `stars`, `useful_votes`, `type`, `date`) VALUES");
+	
+				Review review;
+				for (int i = startingPoint; i < this.reviews.size() - 1; i++) {
+					review = this.reviews.get(i);
+					if(review.text.length() > 2000)
+						review.text = review.text.substring(0, 2000);
+					review.text = review.text.replace("\\", "\\\\");
+					review.text = review.text.replace("'", "");
+					
+					// ('test', 'test', 'test', 'test', '4.5', 3, 'test', 'test'),
+					writer.append("('" + review.review_id + "', '"
+							+ review.business_id + "', '" + review.user_id
+							+ "', '" + review.text + "', '"
+							+ Double.toString(review.stars) + "', "
+							+ Integer.toString(review.useful_votes) + ", '"
+							+ review.type + "', '" + review.date + "'),");
+	
+					reviewCounter++;
+	
+					percent = (double) reviewCounter / (double) numReviewEntries
+							* 100;
+					System.out.println("Review SQL insert Progress: "
+							+ Integer.toString((int) percent) + "% ("
+							+ Integer.toString(reviewCounter) + "/"
+							+ Integer.toString(numReviewEntries) + ")");
+				}
+				review = this.reviews.get(this.reviews.size() - 1);
+				if(review.text.length() > 2000)
+					review.text = review.text.substring(0, 2000);
+				review.text = review.text.replace("\\", "\\\\");
+				review.text = review.text.replace("'", "");
+				
+				// ('test', 'test', 'test', 'test', '4.5', 3, 'test', 'test');
+				// // the last value
+				writer.append("('" + review.review_id + "', '"
+						+ review.business_id + "', '" + review.user_id + "', '"
+						+ review.text + "', '" + Double.toString(review.stars)
+						+ "', " + Integer.toString(review.useful_votes) + ", '"
+						+ review.type + "', '" + review.date + "');");
+	
+				reviewCounter++;
+	
+				percent = (double) reviewCounter / (double) numReviewEntries * 100;
+				System.out.println("Review SQL insert Progress: "
+						+ Integer.toString((int) percent) + "% ("
+						+ Integer.toString(reviewCounter) + "/"
+						+ Integer.toString(numReviewEntries) + ")");
+	
+				// generate whatever data you want
+	
+				writer.flush();
+				writer.close();
+				successfulCreation = true;
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return successfulCreation;
+	}
+
 	public void importTips(){
 		boolean successfulInsert = false;
 		int numTipEntries = this.tips.size();

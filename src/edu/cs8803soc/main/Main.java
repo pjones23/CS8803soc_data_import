@@ -8,11 +8,17 @@ public class Main {
 
 		Import_Data id = new Import_Data();
 		id.buildLists();
-
+		boolean reviewSQLCreation = id.createReviewSQL();
+		if(!reviewSQLCreation)
+			System.out.println("error generation review sql file");
+		else
+			System.out.println("Done creating SQL file");
+		
+		/*
 		Thread businessImportThread = new Thread(new DataOperation(id,
 				DataOperation.BUSINESS));
 		businessImportThread.start();
-
+		
 		Thread reviewImportThread = new Thread(new DataOperation(id,
 				DataOperation.REVIEW));
 		reviewImportThread.start();
@@ -20,11 +26,12 @@ public class Main {
 		Thread tipImportThread = new Thread(new DataOperation(id,
 				DataOperation.TIP));
 		tipImportThread.start();
-
+		
 		Thread checkingImportThread = new Thread(new DataOperation(id,
 				DataOperation.CHECKIN));
 		checkingImportThread.start();
-
+		*/
+		
 	}
 
 	// Display a message, preceded by
