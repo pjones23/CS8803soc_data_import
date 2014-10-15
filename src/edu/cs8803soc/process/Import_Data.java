@@ -324,42 +324,57 @@ public class Import_Data {
 		int returnVal = jfc.showOpenDialog(null);
 	
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
-			File newFile = new File(jfc.getSelectedFile(), "review_insert.sql");
+			
+			// Create multiple files because they have to be separated due to GoDaddy's mysql
+			// maximum packet limit size is 32MB. Currently, there are 706646 review records to
+			// insert result in a 530467 KB (~518 MB).
+			// For sanity check, we will create 18 different sub files which should be below the
+			// 32 MB limit (518/32 = ~16). Each of the sub files will have 39258 records (706646/18 = ~ 39258).
+			
+			int numRecordsPerFile = 39258;
+			int fileCounter = 1;
 	
 			int numReviewEntries = this.reviews.size();
 			int reviewCounter = 0;
 			double percent = 0;
 	
-			// MySQLAccess mysql = new MySQLAccess();
-	
-			// Get starting point by checking current number of records in the
-			// table
-			// int startingPoint = Tip.getNumberOfRecordsInDatabase(mysql);
-	
 			// For now, lets set starting point to 0;
 			int startingPoint = 0;
 	
-			// mysql.close();
-	
-			if (startingPoint == -1) {
-				System.out
-						.println("Error in getting number of records in review table. Returned -1.");
-				return successfulCreation;
-			} else {
-				reviewCounter = startingPoint;
-			}
-	
 			try {
+				
+				File newFile = new File(jfc.getSelectedFile(), "review_insert_" + Integer.toString(fileCounter) + ".sql");
 				FileWriter writer = new FileWriter(newFile.getAbsolutePath());
 	
 				writer.append("INSERT INTO `review_test_import` (`review_id`, `business_id`, `user_id`, `text`, `stars`, `useful_votes`, `type`, `date`) VALUES");
 	
 				Review review;
+				String valueDelimiter;
 				for (int i = startingPoint; i < this.reviews.size() - 1; i++) {
+					// check if a new file is necessary
+					if(i >= numRecordsPerFile && i%numRecordsPerFile == 0){
+						// finalize the old file
+						writer.flush();
+						writer.close();
+						
+						// create a new file to start writing
+						fileCounter++;
+						newFile = new File(jfc.getSelectedFile(), "review_insert_" + Integer.toString(fileCounter) + ".sql");
+						writer = new FileWriter(newFile.getAbsolutePath());
+						
+						writer.append("INSERT INTO `review_test_import` (`review_id`, `business_id`, `user_id`, `text`, `stars`, `useful_votes`, `type`, `date`) VALUES");
+					}
+					
+					//use correct value delimiter when there is a new file
+					if((i+1) >= numRecordsPerFile && (i+1)%numRecordsPerFile == 0)
+						valueDelimiter = ";";
+					else
+						valueDelimiter = ",";
+					
 					review = this.reviews.get(i);
 					if(review.text.length() > 2000)
 						review.text = review.text.substring(0, 2000);
-					review.text = review.text.replace("\\", "\\\\");
+					review.text = review.text.replace("\\", "");
 					review.text = review.text.replace("'", "");
 					
 					// ('test', 'test', 'test', 'test', '4.5', 3, 'test', 'test'),
@@ -368,7 +383,7 @@ public class Import_Data {
 							+ "', '" + review.text + "', '"
 							+ Double.toString(review.stars) + "', "
 							+ Integer.toString(review.useful_votes) + ", '"
-							+ review.type + "', '" + review.date + "'),");
+							+ review.type + "', '" + review.date + "')" + valueDelimiter);
 	
 					reviewCounter++;
 	
